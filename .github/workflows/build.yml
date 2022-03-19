@@ -12,3 +12,6 @@ jobs:
     with:
       release_type: unstable
       tag: r123
+    secrets:
+      ENV_SECRET: ${{ secrets.ENV_SECRET }}
+      ACTION_SECRET: ${{ secrets.ACTION_SECRET }}
