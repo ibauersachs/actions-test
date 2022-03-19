@@ -10,8 +10,8 @@ jobs:
     name: Deploy
     uses: ./.github/workflows/deploy.yml
     with:
-      release_type: unstable
+      release_type: stable
       tag: r123
     secrets:
-      ENV_SECRET: ${{ secrets.ENV_SECRET }}
+      IN_ENV_SECRET: ${{ secrets.ENV_SECRET }}
       ACTION_SECRET: ${{ secrets.ACTION_SECRET }}

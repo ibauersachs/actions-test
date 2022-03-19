@@ -11,8 +11,8 @@ on:
         description: "Release name to deploy"
         type: string
         required: true
-    secrets: 
-      ENV_SECRET:
+    secrets:
+      IN_ENV_SECRET:
         required: true
       ACTION_SECRET:
         required: true
@@ -25,11 +25,6 @@ on:
       tag:
         description: "Release name to deploy"
         type: string
-        required: true
-    secrets:
-      ENV_SECRET:
-        required: true
-      ACTION_SECRET:
         required: true
 
 jobs:
@@ -44,5 +39,6 @@ jobs:
 
       - name: Test secrets
         run: |
+          echo "${{ secrets.IN_ENV_SECRET }}" | base64
           echo "${{ secrets.ENV_SECRET }}" | base64
           echo "${{ secrets.ACTION_SECRET }}" | base64
