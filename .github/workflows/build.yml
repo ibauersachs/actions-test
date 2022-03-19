@@ -1,0 +1,14 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    uses: ./.github/workflows/deploy.yml
+    with:
+      release_type: unstable
+      tag: r123

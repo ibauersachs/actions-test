@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      release_type:
+        description: "The environment to deploy to"
+        type: string
+        required: true
+      tag:
+        description: "Release name to deploy"
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "The environment to deploy to"
+        type: environment
+        required: true
+      tag:
+        description: "Release name to deploy"
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    name: to ${{ inputs.release_type }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.release_type }}
+    concurrency: unstable
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Test secrets
+        run: |
+          echo "${{ secrets.ENV_SECRET }}" | base64
+          echo "${{ secrets.ACTION_SECRET }}" | base64
