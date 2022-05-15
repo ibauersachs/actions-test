@@ -46,7 +46,7 @@ jobs:
           echo "${{ github.event.inputs.release_type }}"
           echo "${{ github.event.inputs.tag }}"
           echo "${{ github.event.inputs.release_type || inputs.release_type }}"
-          echo "${{ github.event.inputs.tag || inputs.release_type }}"
+          echo "${{ github.event.inputs.tag || inputs.tag }}"
           echo "${{ secrets.IN_ENV_SECRET }}" | base64
           echo "${{ secrets.ENV_SECRET }}" | base64
           echo "${{ secrets.ACTION_SECRET }}" | base64
