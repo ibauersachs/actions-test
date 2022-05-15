@@ -14,4 +14,5 @@ jobs:
       tag: r123
     secrets:
       IN_ENV_SECRET: ${{ secrets.ENV_SECRET }}
+      ENV_SECRET: ${{ secrets.ENV_SECRET }}
       ACTION_SECRET: ${{ secrets.ACTION_SECRET }}
