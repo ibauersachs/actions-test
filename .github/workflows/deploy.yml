@@ -11,13 +11,6 @@ on:
         description: "Release name to deploy"
         type: string
         required: true
-    secrets:
-      IN_ENV_SECRET:
-        required: true
-      ENV_SECRET:
-        required: true
-      ACTION_SECRET:
-        required: true
   workflow_dispatch:
     inputs:
       release_type:
