@@ -41,6 +41,8 @@ jobs:
 
       - name: Test secrets
         run: |
+          echo "${{ inputs.release_type }}"
+          echo "${{ inputs.tag }}"
           echo "${{ github.event.inputs.release_type }}"
           echo "${{ github.event.inputs.tag }}"
           echo "${{ secrets.IN_ENV_SECRET }}" | base64
