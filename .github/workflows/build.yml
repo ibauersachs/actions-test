@@ -49,6 +49,9 @@ jobs:
           sudo mv target/chroot/chroot.d/* /etc/schroot/chroot.d/
           sudo chown -R root:root /var/lib/schroot/tarballs/
           sudo chown -R root:root /etc/schroot/chroot.d/
+
+      - name: Show chroot contents
+        run: |
           ls -al /var/lib/schroot/tarballs/
           ls -al /etc/schroot/chroot.d/
 
