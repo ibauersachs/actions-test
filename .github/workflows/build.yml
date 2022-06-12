@@ -4,12 +4,74 @@ on:
   push:
     branches:
       - master
-
 jobs:
-  deploy:
-    name: Deploy
-    uses: ./.github/workflows/deploy.yml
-    with:
-      release_type: stable
-      tag: r123
-    secrets: inherit
+  deb:
+    runs-on: ubuntu-latest
+
+    env:
+      UBUNTUTOOLS_UBUNTU_MIRROR: http://azure.archive.ubuntu.com/ubuntu
+      UBUNTUTOOLS_DEBIAN_MIRROR: http://ftp.debian.org/debian/
+      UBUNTUTOOLS_DEBSEC_MIRROR: http://security.debian.org/debian-security/
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: tools
+        run: |
+          sudo apt-get update
+          # dev-tools from backports because https://bugs.launchpad.net/ubuntu/+source/ubuntu-dev-tools/+bug/1916633
+          sudo apt-get install -y \
+          debhelper \
+          aptitude \
+          sbuild \
+          schroot \
+          ubuntu-dev-tools/$(lsb_release -c -s)-backports \
+          python3-ubuntutools/$(lsb_release -c -s)-backports \
+          debian-archive-keyring \
+          git-buildpackage \
+          rename \
+          distro-info
+          sudo adduser $USER sbuild
+
+      - name: Cache sbuild chroot stanza
+        uses: actions/cache@v3
+        id: chroot_cache
+        with:
+          path: target/chroot
+          key: chroot-${{ matrix.dist.dist }}-${{ matrix.arch }}-${{ hashFiles('target/chroot/**') }}
+          restore-keys: |
+            chroot-${{ matrix.dist.dist }}-${{ matrix.arch }}-
+
+      - name: Move chroot from cache
+        if: steps.chroot_cache.outputs.cache-hit
+        run: |
+          sudo mkdir -p /var/lib/schroot/tarballs/
+          sudo mkdir -p /etc/schroot/chroot.d/
+          sudo mv target/chroot/tarballs/* /var/lib/schroot/tarballs/
+          sudo mv target/chroot/chroot.d/* /etc/schroot/chroot.d/
+          sudo chown -R root:root /var/lib/schroot/tarballs/
+          sudo chown -R root:root /etc/schroot/chroot.d/
+          ls -al /var/lib/schroot/tarballs/
+          ls -al /etc/schroot/chroot.d/
+
+      - name: sbuild
+        shell: /usr/bin/sg sbuild -c "/bin/bash -e {0}"
+        run: |
+          mk-sbuild focal --skip-security --debootstrap-include=default-jdk --type=file || true
+          sudo sbuild-update -ud focal-amd64
+          ls -al /var/lib/schroot/tarballs/
+          ls -al /etc/schroot/chroot.d/
+
+      - name: Archive chroot for cache
+        run: |
+          mkdir -p target/chroot
+          sudo mv /var/lib/schroot/tarballs/ target/chroot
+          sudo mv /etc/schroot/chroot.d/ target/chroot
+          sudo chown -R runner:runner target/chroot
+          ls -al target/chroot
+
+#  deploy:
+#    name: Deploy
+#    uses: ./.github/workflows/deploy.yml
+#    with:
+#      release_type: stable
+#      tag: r123
+#    secrets: inherit
