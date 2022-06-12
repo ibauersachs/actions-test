@@ -58,7 +58,9 @@ jobs:
       - name: sbuild
         shell: /usr/bin/sg sbuild -c "/bin/bash -e {0}"
         run: |
-          mk-sbuild focal --skip-security --debootstrap-include=default-jdk --type=file || true
+          if [ ! -f /var/lib/schroot/tarballs/focal-amd64.tgz ]; then
+            mk-sbuild focal --skip-security --debootstrap-include=default-jdk --type=file || true
+          fi
           sudo sbuild-update -ud focal-amd64
           ls -al /var/lib/schroot/tarballs/
           ls -al /etc/schroot/chroot.d/
