@@ -5,7 +5,7 @@ on:
 
 jobs:
   download:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       - name: dl
         run: curl -s https://nexus.ingo.ch/jitsi-desktop/oci > /dev/null
