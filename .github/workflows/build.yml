@@ -23,6 +23,7 @@ jobs:
       - name: Install packages for native build
         env:
           DEBIAN_FRONTEND: noninteractive
+          RELEASE_JAVA_VERSION: 11
         run: |
           dpkg -l
           ls -al /etc/apt/sources.list.d/
