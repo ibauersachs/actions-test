@@ -29,8 +29,9 @@ jobs:
           ls -al /etc/apt/sources.list.d/
           cat /etc/apt/sources.list
           sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
-          sudo apt-get remove --purge g++-9 g++-10
+          sudo apt-get remove --purge g++-9 g++-10 php*
           sudo apt-get autoremove --purge
+          dpkg -l
           if [ "${{ matrix.arch }}" != "i386" ] && [ "${{ matrix.arch }}" != "x86-64" ]; then
             sudo cp -f ubuntu-build-image/ports-sources.list /etc/apt/sources.list
           fi
