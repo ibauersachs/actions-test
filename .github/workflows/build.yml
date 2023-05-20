@@ -32,6 +32,7 @@ jobs:
           sudo apt-add-repository ppa:ondrej/php -y
           sudo apt-get update
           sudo apt-get install -y lz4
+          ll /var/lib/apt/lists/
           sudo unlz4 /var/lib/apt/lists/ppa.launchpad.net_ondrej_php_ubuntu_dists_focal_main_binary-amd64_Packages.lz4 /var/lib/apt/lists/ppa.launchpad.net_ondrej_php_ubuntu_dists_focal_main_binary-amd64_Packages
           sudo ppa-purge ppa:ondrej/php -y
           #sudo apt-get remove --purge php* libgd3 snmp libzip4 nginx
