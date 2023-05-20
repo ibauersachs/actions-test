@@ -3,6 +3,19 @@ ARCH=$1
 JAVA_VERSION=$2
 
 PACKAGES=()
+PACKAGES_HOST=(
+build-essential \
+     autoconf \
+     automake \
+     libtool \
+     curl \
+     git \
+     zip \
+     unzip \
+     nasm \
+     g++ \
+     gcc \
+)
 case "$ARCH" in
   "x86")
     DEBARCH=i386
@@ -20,26 +33,17 @@ case "$ARCH" in
     ;;
 esac
 
-dpkg --add-architecture $DEBARCH
-
 if [[ "$GNUARCH" == "" ]]; then
-    PACKAGES+=(g++-multilib gcc-multilib)
+    PACKAGES_HOST+=(g++-multilib gcc-multilib)
 else
-    PACKAGES+=("libgcc-7-dev:$DEBARCH" "g++-$GNUARCH-linux-gnu" "gcc-$GNUARCH-linux-gnu")
+    PACKAGES_HOST+=("libgcc-7-dev:$DEBARCH" "g++-$GNUARCH-linux-gnu" "gcc-$GNUARCH-linux-gnu")
 fi;
 
+apt-get update && \
+ apt-get install -o Debug::pkgProblemResolver=true -y "${PACKAGES_HOST[@]}" && \
+ rm -rf /var/lib/apt/lists/*
+
 PACKAGES+=(
-     build-essential \
-     autoconf \
-     automake \
-     libtool \
-     curl \
-     git \
-     zip \
-     unzip \
-     nasm \
-     g++ \
-     gcc \
      "libasound2-dev:$DEBARCH" \
      "libpulse-dev:$DEBARCH" \
      "libx11-dev:$DEBARCH" \
@@ -48,6 +52,7 @@ PACKAGES+=(
      "libxv-dev:$DEBARCH" \
      "openjdk-$JAVA_VERSION-jdk:$DEBARCH")
 
-DEBIAN_FRONTEND=noninteractive apt-get update && \
+dpkg --add-architecture $DEBARCH
+apt-get update && \
  apt-get install -o Debug::pkgProblemResolver=true -y "${PACKAGES[@]}" && \
  rm -rf /var/lib/apt/lists/*
