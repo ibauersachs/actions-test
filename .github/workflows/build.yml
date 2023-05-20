@@ -29,7 +29,7 @@ jobs:
           #ls -al /etc/apt/sources.list.d/
           #cat /etc/apt/sources.list
           #sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
-          sudo apt-get remove --purge php* libgd3 snmp libzip4
+          sudo apt-get remove --purge php* libgd3 snmp libzip4 nginx
           sudo apt-get autoremove --purge
           sudo apt-get install libpcre2* -t=focal
           dpkg -l
