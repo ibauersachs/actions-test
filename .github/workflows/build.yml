@@ -5,78 +5,33 @@ on:
     branches:
       - master
 jobs:
-  deb:
-    runs-on: ubuntu-latest
-
-    env:
-      UBUNTUTOOLS_UBUNTU_MIRROR: http://azure.archive.ubuntu.com/ubuntu
-      UBUNTUTOOLS_DEBIAN_MIRROR: http://ftp.debian.org/debian/
-      UBUNTUTOOLS_DEBSEC_MIRROR: http://security.debian.org/debian-security/
-      DEBIAN_FRONTEND: noninteractive
+  ubuntu:
+    name: Linux Static Natives ${{ matrix.arch }}
+    runs-on: ubuntu-20.04
+    needs: javatest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - "x86"
+          - "x86-64"
+          - "arm64"
+          - "ppc64el"
     steps:
-      - name: tools
-        run: |
-          sudo apt-get update
-          # dev-tools from backports because https://bugs.launchpad.net/ubuntu/+source/ubuntu-dev-tools/+bug/1916633
-          sudo apt-get install -y \
-          debhelper \
-          aptitude \
-          sbuild \
-          schroot \
-          ubuntu-dev-tools/$(lsb_release -c -s)-backports \
-          python3-ubuntutools/$(lsb_release -c -s)-backports \
-          debian-archive-keyring \
-          git-buildpackage \
-          rename \
-          distro-info
-          sudo adduser $USER sbuild
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Cache sbuild chroot stanza
-        uses: actions/cache@v3
-        id: chroot_cache
-        with:
-          path: target/chroot
-          key: chroot-${{ matrix.dist.dist }}-${{ matrix.arch }}-${{ hashFiles('target/chroot/**') }}
-          restore-keys: |
-            chroot-${{ matrix.dist.dist }}-${{ matrix.arch }}-
-
-      - name: Move chroot from cache
-        if: steps.chroot_cache.outputs.cache-hit
+      - name: Install packages for native build
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo mkdir -p /var/lib/schroot/tarballs/
-          sudo mkdir -p /etc/schroot/chroot.d/
-          sudo mv target/chroot/tarballs/* /var/lib/schroot/tarballs/
-          sudo mv target/chroot/chroot.d/* /etc/schroot/chroot.d/
-          sudo chown -R root:root /var/lib/schroot/tarballs/
-          sudo chown -R root:root /etc/schroot/chroot.d/
-
-      - name: Show chroot contents
-        run: |
-          ls -al /var/lib/schroot/tarballs/
-          ls -al /etc/schroot/chroot.d/
-
-      - name: sbuild
-        shell: /usr/bin/sg sbuild -c "/bin/bash -e {0}"
-        run: |
-          if [ ! -f /var/lib/schroot/tarballs/focal-amd64.tgz ]; then
-            mk-sbuild focal --skip-security --debootstrap-include=default-jdk --type=file || true
+          dpkg -l
+          ls -al /etc/apt/sources.list.d/
+          cat /etc/apt/sources.list
+          sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
+          sudo apt-get remove --purge g++-9 g++-10
+          sudo apt-get autoremove --purge
+          if [ "${{ matrix.arch }}" != "i386" ] && [ "${{ matrix.arch }}" != "x86-64" ]; then
+            sudo cp -f resources/ubuntu-build-image/ports-sources.list /etc/apt/sources.list
           fi
-          sudo sbuild-update -ud focal-amd64
-          ls -al /var/lib/schroot/tarballs/
-          ls -al /etc/schroot/chroot.d/
-
-      - name: Archive chroot for cache
-        run: |
-          mkdir -p target/chroot
-          sudo mv /var/lib/schroot/tarballs/ target/chroot
-          sudo mv /etc/schroot/chroot.d/ target/chroot
-          sudo chown -R runner:runner target/chroot
-          ls -al target/chroot
-
-#  deploy:
-#    name: Deploy
-#    uses: ./.github/workflows/deploy.yml
-#    with:
-#      release_type: stable
-#      tag: r123
-#    secrets: inherit
+          sudo ./resources/ubuntu-build-image/packages.sh ${{ matrix.arch }} ${{ env.RELEASE_JAVA_VERSION }}
