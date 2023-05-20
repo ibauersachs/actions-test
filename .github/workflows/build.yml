@@ -29,7 +29,7 @@ jobs:
           #ls -al /etc/apt/sources.list.d/
           #cat /etc/apt/sources.list
           #sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
-          sudo apt-get remove --purge php* libgd3 libpcre2* snmp libzip4 mono* nginx
+          sudo apt-get remove --purge php* libgd3 libpcre2* snmp libzip4 mono* nginx ant
           sudo apt-get autoremove --purge
           dpkg -l
           if [ "${{ matrix.arch }}" != "i386" ] && [ "${{ matrix.arch }}" != "x86-64" ]; then
