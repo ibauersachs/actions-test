@@ -13,9 +13,6 @@ jobs:
       matrix:
         arch:
           - "x86"
-          - "x86-64"
-          - "arm64"
-          - "ppc64el"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
