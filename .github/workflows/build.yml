@@ -29,6 +29,7 @@ jobs:
           #ls -al /etc/apt/sources.list.d/
           #cat /etc/apt/sources.list
           #sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
+          sudo apt-get remove -y libpcre2-dev libicu-dev icu-devtools
           sudo apt-add-repository ppa:ondrej/php -y
           sudo apt-get install -y ppa-purge aptitude
           echo "Get::allow-downgrades \"true\";" > sudo tee /etc/apt/apt.conf.d/99-downgrades
