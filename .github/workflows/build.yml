@@ -33,6 +33,7 @@ jobs:
           sudo apt-add-repository ppa:ondrej/php -y
           sudo apt-get install -y ppa-purge aptitude
           echo "Get::allow-downgrades \"true\";" | sudo tee /etc/apt/apt.conf.d/99-downgrades
+          echo "Get::Assume-Yes \"true\";" | sudo tee -a /etc/apt/apt.conf.d/99-downgrades
           sudo ppa-purge ppa:ondrej/php -y
           #sudo apt-get remove --purge php* libgd3 snmp libzip4 nginx
           #sudo apt-get autoremove --purge
