@@ -1,0 +1,34 @@
+name: Push Test
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    # run every day at 06:13 and 20:13 UTC
+    - cron:  '13 6,20 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  DEBEMAIL: "ingo@jitsi.org"
+  DEBFULLNAME: "Ingo Bauersachs"
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+  version:
+    permissions:
+      # for git push
+      contents: write
+    name: Jammy Mainline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark as built
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag "v1"
+          git push --tags
