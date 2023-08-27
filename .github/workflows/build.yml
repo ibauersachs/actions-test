@@ -4,41 +4,12 @@ on:
   push:
     branches:
       - master
-jobs:
-  ubuntu:
-    name: Linux Static Natives ${{ matrix.arch }}
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        arch:
-          - "x86"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      - name: Install packages for native build
-        env:
-          DEBIAN_FRONTEND: noninteractive
-          RELEASE_JAVA_VERSION: 11
-        run: |
-          dpkg -l
-          #ls -al /etc/apt/sources.list.d/
-          #cat /etc/apt/sources.list
-          #sudo rm -f /etc/apt/sources.list.d/ubuntu-toolchain-r-ubuntu-test-focal.list
-          sudo apt-get remove -y libpcre2-dev libicu-dev icu-devtools
-          sudo apt-add-repository ppa:ondrej/php -y
-          sudo apt-get install -y aptitude
-          echo "Get::allow-downgrades \"true\";" | sudo tee /etc/apt/apt.conf.d/99-downgrades
-          echo "Get::Assume-Yes \"true\";" | sudo tee -a /etc/apt/apt.conf.d/99-downgrades
-          pwd
-          ls -al
-          sudo ./ubuntu-build-image/ppa-purge.sh ppa:ondrej/php -y true
-          #sudo apt-get remove --purge php* libgd3 snmp libzip4 nginx
-          #sudo apt-get autoremove --purge
-          #sudo apt-get install libpcre2* -t=focal
-          dpkg -l
-          if [ "${{ matrix.arch }}" != "i386" ] && [ "${{ matrix.arch }}" != "x86-64" ]; then
-            sudo cp -f ubuntu-build-image/ports-sources.list /etc/apt/sources.list
-          fi
-          sudo ./ubuntu-build-image/packages.sh ${{ matrix.arch }} ${{ env.RELEASE_JAVA_VERSION }}
+jobs:
+  deploy:
+    name: Deploy
+    uses: ./.github/workflows/deploy.yml
+    with:
+      release_type: stable
+      tag: r123
+    secrets: inherit
