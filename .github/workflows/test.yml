@@ -37,6 +37,6 @@ jobs:
 
       - name: Build deb package
         # the user executing sbuild needs to be in the group sbuild, a relogin is not possible here
-        shell: /usr/bin/sg sbuild -c "/usr/bin/bash -e {0}"
+        shell: sudo /usr/bin/sg sbuild -c "/usr/bin/bash -e {0}"
         run: |
           env | sort
