@@ -29,6 +29,9 @@ jobs:
             rename
           sudo usermod -p "*" sbuild
           sudo usermod -a -G sbuild "$(whoami)"
+          sudo cat /etc/passwd
+          sudo cat /etc/shadow
+          sudo cat /etc/groups
 
       - name: Build deb package
         # the user executing sbuild needs to be in the group sbuild, a relogin is not possible here
