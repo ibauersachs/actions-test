@@ -27,6 +27,7 @@ jobs:
             debian-archive-keyring \
             git-buildpackage \
             rename
+          sudo usermod -p "*" sbuild
           sudo usermod -a -G sbuild "$(whoami)"
 
       - name: Build deb package
