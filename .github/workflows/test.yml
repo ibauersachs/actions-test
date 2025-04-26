@@ -37,7 +37,7 @@ jobs:
 
       - name: Build deb package
         # the user executing sbuild needs to be in the group sbuild, a relogin is not possible here
-        shell: /usr/bin/sudo su runner -g sbuild -s /usr/bin/bash -c "whoami && env | sort && {0}"
+        shell: /usr/bin/sudo su runner -s /usr/bin/bash -c {0}
         run: |
           groups
           echo "----"
