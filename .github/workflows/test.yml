@@ -31,7 +31,6 @@ jobs:
           sudo usermod -p "*" sbuild
           sudo usermod -a -G sbuild "$(whoami)"
           sudo usermod -a -G sbuild "runneradmin"
-          sudo usermod -a -G sbuild "admin"
           sudo cat /etc/passwd
           sudo cat /etc/shadow
           sudo cat /etc/group
