@@ -31,13 +31,14 @@ jobs:
           sudo usermod -p "*" sbuild
           sudo usermod -a -G sbuild "$(whoami)"
           sudo usermod -a -G sbuild "runneradmin"
+          sudo gpasswd -r sbuild
           sudo cat /etc/passwd
           sudo cat /etc/shadow
           sudo cat /etc/group
 
       - name: Build deb package
         # the user executing sbuild needs to be in the group sbuild, a relogin is not possible here
-        shell: /usr/bin/sudo su runner -s /usr/bin/bash -c {0}
+        shell: /usr/bin/sg sbuild -c "/usr/bin/bash -e {0}"
         run: |
           groups
           echo "----"
